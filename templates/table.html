@@ -1,0 +1,57 @@
+{% if messages %}
+<ul class="msg">
+    {% for message in messages %}
+        <li  {% if message.tags %} class="{{message.tags }}" {% endif %}>  {{   message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<table border="2">
+<thead>
+    <tr>
+        <th>Student no:</th>
+        <th>Username </th>
+        <th>Email </th>
+        <th>First name </th>
+        <th>Last name </th>
+        <th>Mobile </th>
+        <th>Address </th>
+        <th>Update</th>
+    </tr>
+</thead>
+
+<tbody> 
+    {% if request.user.is_superuser %}
+        {% for u in user %}
+            <tr id="row{{u.id}}"> 
+                <td id="idName{{u.id}}">{{u.id}}</td>
+                <td id="idUserName{{u.id}}">{{u.username}}</td>
+                <td id="idEmail{{u.id}}">{{u.email}}</td>
+                <td id="idFirstName{{u.id}}">{{u.first_name}}</td>
+                <td id="idLastName{{u.id}}">{{u.last_name}}</td>
+                <td id="idMobile{{u.id}}">{{u.mobile}}</td>
+                <td id="idAddress{{u.id}}">{{u.address}}</td>
+                {% if u.id == request.user.id %}
+                    <td></td>
+                {% else %}
+                    <td><button class="btn btn-primary" data-toggle="modal"    onclick="edit_user({{u.id}})" data-target="#myModal" >Update</button></td>
+                    <td><button onclick="del_user({{u.id}})"class="btn">Delete</button></td>
+                {% endif %}
+                
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td>{{request.user.id}}</td>
+            <td>{{request.user.username}}</td>
+            <td>{{request.user.email}}</td>
+            <td>{{request.user.first_name}}</td>
+            <td>{{request.user.last_name}}</td>
+            <td>{{request.user.mobile}}</td>
+            <td>{{request.user.address}}</td>
+            <td><button >
+                <a href="{% url 'edit' request.user.id %}">Update</a>
+            </button></td>
+        </tr>
+    {% endif %}
+</tbody>
+</table>

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<body>
+	{% block content %}
+	<div id="abcd">
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+	<form method ="POST" enctype="multipart/form-data">
+		{%csrf_token%}
+		<label for="username">username </label>
+		<input type="text" name="username"  required>
+		<br>
+		<label for="firstname">First name: </label>
+		<input type="text" name="first_name"  required>
+		<br>
+		<label for="lastname">Last name: </label>
+		<input type="text" name="last_name"  required>
+		<br>
+		<label for="email">email: </label>
+		<input type="email" name="email"  required>
+		<br>
+		<label for="address">Address: </label>
+		<input type="text" name="address"  required>
+		<br>
+		<label for="mobile">Mobile: </label>
+		<input type="number" name="mobile"  required>
+		<br>
+        <label for="image">Image: </label>
+		<input type="file" name="image"  required>
+		<br>
+		<input type="submit" value="Register">
+	</form>
+	{% endblock content %}
+</body>
+</html>

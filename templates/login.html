@@ -1,0 +1,32 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+    {% block content %}
+    <h1>Login</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="username_or_email">Username or Email:</label>
+        <input type="text" id="username_or_email" name="username_or_email" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <i class="bi bi-eye-slash" id="togglePassword"></i>
+        <br>
+        <input type="submit" value="Login">
+    </form>    
+        <script>
+            const togglePassword = document.querySelector("#togglePassword");
+            const password = document.querySelector("#password");
+    
+            togglePassword.addEventListener("click", function () {
+       
+                const type = password.getAttribute("type") === "password" ? "text" : "password";
+                password.setAttribute("type", type);
+            
+                this.classList.toggle("bi-eye");
+            });
+        </script>
+   
+    {% endblock content %}
+

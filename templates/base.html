@@ -1,0 +1,151 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+    {% comment %} <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/dist/js/alertify.js"></script> {% endcomment %}
+    {% comment %} <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script> {% endcomment %}
+    <style>
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          background-color: skyblue;
+        }
+        
+        li {
+          float: left;
+        }
+        
+        li a {
+          display: block;
+          color: white;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+        }
+        
+        li a:hover {
+          background-color: #111;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+          }
+          
+          .dropdown-content a {
+            float: none;
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+          }
+          
+          .dropdown-content a:hover {
+            background-color: #ddd;
+          }
+          
+          .dropdown:hover .dropdown-content {
+            display: block;
+          }
+         
+        
+        </style>
+    <title>{% block title %}School{% endblock %}</title>
+</head>
+<body>
+    <div class="row">
+      <div class="col-1">
+      </div>
+      <div class="col-11">
+        <header>
+          <nav>
+            <ul>
+                {% if request.user.is_authenticated %}
+                    <li><h5 style="color: white;">Welcome {{ request.user.username }}</h5></li>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'sign_in' %}">Sign In</a></li>
+                    <li><a href="{% url 'change_password' %}">Change Password</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li> 
+                    {% if not_read %}
+                      <li><a href="{% url 'notify' %}">Notify/{{n_c}}</a></li>
+                    {% else %}
+                      <li><a href="{% url 'notify' %}">Notify</a></li>
+                    {% endif %}
+
+                {% else %}
+                    <li><a href="{% url 'sign_up' %}">Sign up</a></li>
+                    <li><a href="{% url 'sign_in' %}">Sign In</a></li>
+                {% endif %}
+                
+                  
+            
+                
+                <form>
+                    Theme
+                    <!-- Note the onchange attribute. "this" refers to the changing element. -->
+                    <select id="background" onchange="updateBackgroundColour(this)">
+                      <option value="red">Red</option>
+                      <option value="yellowgreen">Medium Spring Green</option>
+                      <option value="#34495e">Wet asphalt</option>
+                    </select>
+                  </form>
+            </ul>
+            {% comment %} <img src="{{user.image.url}}" height="20"></a> {% endcomment %}
+          </nav>
+        </header>
+      </div>
+        <script>
+          {% comment %} document.addEventListener("DOMContentLoaded", function () {
+            function showAlertify(message, type) {
+                alertify.set('notifier', 'position', 'top-right');
+                alertify.notify(message, type, 5);
+            }
+          }); {% endcomment %}
+        
+            
+        
+            function updateBackgroundColour(selectElem) {
+                var i = selectElem.selectedIndex; 
+                if (i < 0) {
+                  return;
+                }
+              
+                document.body.style.backgroundColor = selectElem.options[i].value;
+                
+                Cookies.set('background', selectElem.options[i].value);
+
+              };
+              function setPageBackgroundColor() {
+                var backgroundValue = Cookies.get('background');
+                if (backgroundValue) {
+                  document.body.style.backgroundColor = backgroundValue;
+                }
+              }
+          
+            
+              setPageBackgroundColor();
+        </script>
+    </div>
+    <main>
+      {% block content %}
+      {% endblock %}
+    </main>
+</body>
+</html>
+
