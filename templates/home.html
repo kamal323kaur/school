@@ -17,6 +17,7 @@
         <table border="2">
             <thead>
                 <tr>
+                    <th>Image:</th>
                     <th>Student no:</th>
                     <th>Username </th>
                     <th>Email </th>
@@ -32,34 +33,73 @@
                 {% if request.user.is_superuser %}
                     {% for u in user %}
                         <tr id="row{{u.id}}"> 
+                            {% if u.image %}
+                                <td><a><img src="{{u.image.url}}" height="20" alt="img"></a></td>
+                            {% else %}
+                                <td><h5>----</h5></td>
+                            {% endif %}
                             <td id="idName{{u.id}}">{{u.id}}</td>
                             <td id="idUserName{{u.id}}">{{u.username}}</td>
                             <td id="idEmail{{u.id}}">{{u.email}}</td>
-                            <td id="idFirstName{{u.id}}">{{u.first_name}}</td>
-                            <td id="idLastName{{u.id}}">{{u.last_name}}</td>
+                            {% if u.first_name %}
+                                <td id="idFirstName{{u.id}}">{{u.first_name}}</td>
+                            {% else %}
+                                <td id="idFirstName{{u.id}}">----</td>
+                            {% endif %}
+
+                            {% if u.last_name %}
+                                <td id="idLastName{{u.id}}">{{u.last_name}}</td>
+                            {% else %}
+                                <td id="idLastName{{u.id}}">----</td>
+                            {% endif %}
                             <td id="idMobile{{u.id}}">{{u.mobile}}</td>
-                            <td id="idAddress{{u.id}}">{{u.address}}</td>
+                            {% if u.address %}
+                                <td id="idAddress{{u.id}}">{{u.address}}</td>
+                            {% else %}
+                                <td id="idAddress{{u.id}}">----</td>
+                            {% endif %}
                             {% if u.id == request.user.id %}
                                 <td></td>
                             {% else %}
                                 <td><button class="btn btn-primary" data-toggle="modal"    onclick="edit_user({{u.id}})" data-target="#myModal" >Update</button></td>
                                 <td><button onclick="del_user({{u.id}})"class="btn">Delete</button></td>
+                                
                             {% endif %}
                             
                         </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
+                        {% if request.user.image %}
+                            <td><a><img src="{{request.user.image.url}}" height="20" alt="img"></a></td>
+                        {% else %}
+                            <td><h5>----</h5></td>
+                        {% endif %}
                         <td>{{request.user.id}}</td>
                         <td>{{request.user.username}}</td>
                         <td>{{request.user.email}}</td>
-                        <td>{{request.user.first_name}}</td>
-                        <td>{{request.user.last_name}}</td>
+                        {% if request.user.first_name %} 
+                            <td>{{request.user.first_name}}</td>
+                        {% else %}
+                            <td><h5>None</h5></td>
+                        {% endif %}
+
+                        {% if request.user.last_name %} 
+                            <td>{{request.user.last_name}}</td>
+                        {% else %}
+                            <td>None</td>
+                        {% endif %}
+
                         <td>{{request.user.mobile}}</td>
-                        <td>{{request.user.address}}</td>
-                        <td><button >
-                            <a href="{% url 'edit' request.user.id %}">Update</a>
+                        {% if request.user.address %} 
+                            <td>{{request.user.address}}</td>
+                        {% else %}
+                            <td>None</td>
+                        {% endif %}
+                        
+                        <td><a href="{% url 'edit' request.user.id %}">Update</a>
                         </button></td>
+                       
                     </tr>
                 {% endif %}
             </tbody>
@@ -126,7 +166,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary"     data-dismiss="modal">Close</button>
-                    <button type="button" id="bttn" class="btn btn-primary" onclick="create_user() ">Create User</button>
+                    <button type="button" id="bttn" data-dismiss="modal" class="btn btn-primary" onclick="create_user() ">Create User</button>
                 </div>
             </div>
         </div>
@@ -134,7 +174,7 @@
     
    
     {% comment %} update---------------------------------------------------{% endcomment %}
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
@@ -183,33 +223,23 @@
                 </div>
                 <div class="modal-footer">
                     <button  data-dismiss="modal">Close</button>
-                    <button id="btnsave" onclick="update_user()">Send message</button>
+                    <button id="btnsave" data-dismiss="modal" onclick="update_user()">Send message</button>
                 </div>
             </div>
         </div>
-        {% comment %} {% if messages %}
-                <ul class="messags">
-                    {% for message in messages %}
-                    <li id="msg" {% if message.tags %} class="{{ message.tags }}"{% endif %}>  {{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %} {% endcomment %}
+
 
     <script>
-       
-   
-
-
+        const myTimeout = setTimeout(hidemsg, 8000);
         var info_messages = document.getElementsByClassName('msg');
-        setTimeout(function(){
-            console.log('fhjdgfjfkjsdfjhdgfjdgfjk')
-            for (var i = 0; i < info_messages.length; i ++) {
-                // Set display attribute as !important, neccessary when using bootstrap
+        function hidemsg(){
+            for (var i = 0; i < info_messages.length; i ++) {    
                 info_messages[i].setAttribute('style', 'display:none !important');
             }
-        }, 8000);
-    
-
+            setTimeout(hidemsg, 8000);
+        }
+        hidemsg();
+        
         let base64String = ""; 
         $(document).ready(function () {
          
@@ -217,13 +247,12 @@
                 imageUploaded();
                 
                 function imageUploaded() {
-                    let file = document.querySelector('input[type=file]')['files'][0];
+                    let file = document.querySelector('input[id=add_image]')['files'][0];
                     let reader = new FileReader();
                     console.log("next");
                     reader.onload = function () {
                         base64String = reader.result.replace("data:", "")
                             .replace(/^.+,/, "");
-                        console.log("------------------------------------------------------",   base64String);
                         return base64String;
                     }
                     reader.readAsDataURL(file); 
@@ -294,8 +323,7 @@
             $("#edit_last_name").val(lastname)
             $("#edit_mobile").val(mobile)
             $("#edit_address").val(address)
-            $("btnsave").html("Update")
-            $("btnsave").attr('data')
+         
         };
 
         function update_user(id){
@@ -336,22 +364,7 @@
             });
         };
 
+       
     </script>
 {% endblock content %}
 
-//$(document).ready(function () {            
-//  $("#bttn").click(function () {
-//      var msgg = $("#msg").html(); 
-//      console.log('k--------kml----------k ',msgg)
-//      $("#mesgges").val(msgg)
-//      console.log('k--------kml----------k ')
-//      $("#mesgges").show();
-//  });
-//});
-//          
-//$(document).ready(function () {            
-    $("#bttn").click(function () {
-        $(".msg").show();
-        console.log('k--------kml----------k ')
-    });
-});

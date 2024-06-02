@@ -30,7 +30,6 @@ def delete_user(request,id):
             context={'user':user}
             messages.success(request, 'user deleted successfully.')
             b=render_to_string('table.html',context,request)
-
             return JsonResponse( {'b':b} )
 
 def sign_up(request):
@@ -45,16 +44,22 @@ def sign_up(request):
             imag=request.POST.get('iImage')
             if username and email and mobile:
                 user = CustomUser.objects.filter(Q(username=username) | Q(email=email) | Q(mobile=mobile)).first()
+          
                 if len(mobile) == 10 and (all(i.isdigit() for i in mobile)):
                     if user is None:              
                         u=CustomUser.objects.all()                  
-                        usr = CustomUser.objects.create(username=username,first_name=first_name,last_name=last_name,email=email,address=address,mobile=mobile,password='user@123') 
-                        image_data=base64.b64decode(imag)
+                        usr = CustomUser.objects.create(username=username,first_name=first_name,last_name=last_name,email=email,address=address,mobile=mobile) 
+                        if imag:
+                            image_data=base64.b64decode(imag)
+                            usr.set_password('userk123')
+                            print('----------------------',usr.set_password('userk123'))
+                            m = CustomUser()
+                            iimg = ContentFile(image_data,name=f'{username}.jpg')
+                            usr.image=iimg
+                            usr.save()
+                        else:
+                            pass
                         usr.set_password('userk123')
-                        m = CustomUser()
-                        iimg = ContentFile(image_data,name=f'{username}.jpg')
-                        usr.image=iimg
-
                         usr.save()
                         messages.success(request, 'user created successfully.')
                         context={'user':u}
@@ -66,29 +71,33 @@ def sign_up(request):
                     messages.error(request, 'mobile number is not valid')
             else:
                 messages.error(request, 'data required for username,mobile and email')
-                u=CustomUser.objects.all()
-                django_messages = []
-                for message in messages.get_messages(request):
-                    django_messages.append({
-                    
-                        "message": message.message,
-
+            u=CustomUser.objects.all()
+            django_messages = []
+            for message in messages.get_messages(request):
+                django_messages.append({
+                    "message": message.message,
                     })
-            context={'user':u,'messags':django_messages}
-            b=render_to_string('table.html',context,request)
-            return JsonResponse( {'k':b})
+                context={'user':u,'messags':django_messages}
+                b=render_to_string('table.html',context,request)
+                return JsonResponse({'k':b})
+
 
 def sign_in(request):
     if request.method == 'POST':
         username_or_email = request.POST.get('username_or_email')
         password = request.POST.get('password')
+        print("--------------------------------",request.POST)
         if '@' in username_or_email:
             u=CustomUser.objects.filter(email=username_or_email)
             user = authenticate(username=u.first().username, password=password)
+            print("--------------------------------------------------")
         else:
             user = authenticate(username=username_or_email,password=password)
+            print("heufi98yj-----------------------------")
         if user:
+            print("7777777777777777")
             login(request, user) 
+            print("999999999999999999999")
             return redirect("/")
         else:        
             return render(request, 'login.html')
@@ -105,38 +114,45 @@ def update_user(request,id):
         email=request.POST.get('iEmail')
         address=request.POST.get('iAddress')
         mobile=request.POST.get('iMobile')
-        imag=request.POST.get('iImage')    
-        if len(mobile) == 10 and (all(i.isdigit() for i in mobile)):
-            u=CustomUser.objects.all()
-            if username!=u.first().username or email!=u.first().email or mobile!=u.first().mobile:                
-                user=CustomUser.objects.get(id=id)
-                user.username=username
-                user.email=email
-                user.address=address
-                user.mobile=mobile
-                user.first_name=first_name
-                user.last_name=last_name
-                if imag:
-                    user.image.delete()
-                    image_data = base64.b64decode(imag)
-                    iimg = ContentFile(image_data,name=f'{username}.jpg')
-                    user.image=iimg
-                    user.save()
-                else:
-                    user.save()          
+        imag=request.POST.get('iImage') 
+        if username and email and mobile:   
+            if len(mobile) == 10 and (all(i.isdigit() for i in mobile)):
+                uk=CustomUser.objects.exclude(id=id)
+                print("-----------------------------------exclude----------",uk)
+                us=uk.filter(Q(username=username) | Q(email=email) | Q(mobile=mobile)).first()
+                print("---------------------------------------------",us)
+                if us is None:               
+                    user=CustomUser.objects.get(id=id)
+                    user.username=username
+                    user.email=email
+                    user.address=address
+                    user.mobile=mobile
+                    user.first_name=first_name
+                    user.last_name=last_name
+                    if imag:
+                        user.image.delete()
+                        image_data = base64.b64decode(imag)
+                        iimg = ContentFile(image_data,name=f'{username}.jpg')
+                        user.image=iimg
+                        user.save()
+                    else:
+                        user.save()          
+                    messages.success(request, 'user updated successfully.')
+                    user1=CustomUser.objects.get(username=username)
 
-                user1=CustomUser.objects.get(username=username)
-            
-                notify = Notification.objects.create(user=user1, notify="Profile updated by priciple", read=False)
-                notify.save()
-                context={'user':u}
-                b=render_to_string('table.html',context,request)
-  
-                return JsonResponse( {'k':b})
+                    notify = Notification.objects.create(user=user1, notify="Profile updated  by priciple", read=False)
+                    notify.save()
+                    u=CustomUser.objects.all()
+                    context={'user':u}
+                    b=render_to_string('table.html',context,request)
+                    return JsonResponse( {'k':b})
+                else:
+                    print("------------------------------------not")
+                    messages.error(request, 'user already exist')
             else:
-                    messages.error(request, 'user already exist.')       
+                messages.error(request, 'mobile number is not valid ')
         else:
-            messages.error(request, 'mobile number is not valid')
+            messages.error(request, 'data required for username,mobile and email')
         u=CustomUser.objects.all()
         django_messages = []
         for message in messages.get_messages(request):
@@ -148,7 +164,6 @@ def update_user(request,id):
             return JsonResponse( {'k':b})
 
 
-
 def notify(request):
     if request.method == 'GET':      
         unread_n=Notification.objects.filter(user=request.user,read=False).values_list('id',flat=True)
@@ -156,8 +171,10 @@ def notify(request):
         read_n=Notification.objects.filter(user=request.user)
         # id_name = [(unread_n.id) for object in unread_n]
         user = CustomUser.objects.filter(username=request.user.username)
+        print('--------------------------------------------',user)
         if user:
             d=Notification.objects.filter(user=request.user)
+            print('------------------------------------',d)
             d.update(read=True)
         return render(request,'notify.html',{'kk':unread_n,'read_n':read_n,'l':l})
       
@@ -173,7 +190,8 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password is successfully updated!')
-            return redirect('change_password')
+            logout(request)
+            return redirect('/sign_in')
         else:
             messages.error(request, 'Please correct.')
     else:
@@ -182,8 +200,9 @@ def change_password(request):
         'form': form
     })
 
-def edit(request,id):
+def edit(request,id):     
     if request.method =='POST':
+        user=CustomUser.objects.get(username=request.user.username)
         username=request.POST.get('username')
         email=request.POST.get('email')
         first_name=request.POST.get('first_name')
@@ -192,17 +211,25 @@ def edit(request,id):
         mobile=request.POST.get('mobile')
         image=request.FILES.get('image')
         print(username,first_name,last_name,email,address,mobile,image)
-        if len(mobile) == 10 or (all(i.isdigit() for i in mobile)):
-            u=CustomUser.objects.exclude(username=request.user.username)
-            if username!=u.first().username or email!=u.first().email or mobile!=u.first(). mobile:   
-                user=CustomUser.objects.filter(id=id)
-                user.update(username=username,email=email,first_name=first_name,last_name=last_name,address=address,mobile=mobile,image=image)
-                user = CustomUser.objects.get(username=username)
-                superuser = CustomUser.objects.get(is_superuser=True)
-                notify = Notification.objects.create(user=superuser,notify=f'Profileupdated by {user}', read=False) 
+        if username and email and mobile:
+            if len(mobile) == 10 and (all(i.isdigit() for i in mobile)):
+                uk=CustomUser.objects.exclude(id=id)
+                print("-----------------------------------exclude----------",uk)
+                us=uk.filter(Q(username=username) | Q(email=email) | Q(mobile=mobile)).first()
+                print("---------------------------------------------",us)
+                if us is None:                 
+                    user=CustomUser.objects.filter(id=id)
+                    user.update(username=username,email=email, first_name=first_name,      last_name=last_name,address=address,   mobile=mobile,image=image)
+                    messages.success(request, 'user updated.')
+                    user = CustomUser.objects.get(username=username)
+                    superuser = CustomUser.objects.get(is_superuser=True)
+                    notify = Notification.objects.create(user=superuser,           notify=f'Profileupdated by {user}', read=False) 
+                else:
+                    messages.error(request, 'user already exist.')
             else:
-                messages.error(request, 'user already exist.')
+                messages.error(request, 'mobile number is not valid')
         else:
-            messages.error(request, 'mobile number is not valid')
-
+            messages.error(request, 'data required for username,mobile and email')
+        return render(request,'update.html',{'user':user})
     return render(request,'update.html')
+

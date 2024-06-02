@@ -3,15 +3,12 @@ from django.dispatch import receiver
 from core.models import *
 from django.conf import settings
 from django.core.mail import send_mail
-# signals.py
 
-
-
-
-
+@receiver(post_save, sender=CustomUser)
 def user_created(sender,instance, created,**kwargs):
    if created:
       user = CustomUser.objects.filter(username=instance.username)
+      print("---------------------------------------",user)
       subject = 'welcome to school'
       message = f'Hi {instance.username} you have registered in school and your password is userk123'
       email_from = settings.EMAIL_HOST_USER

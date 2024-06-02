@@ -11,6 +11,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+ 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    {% comment %} 
+     {% endcomment %}
+    {% comment %} 
+   
+     {% endcomment %}
     {% comment %} <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/dist/js/alertify.js"></script> {% endcomment %}
     {% comment %} <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script> {% endcomment %}
@@ -63,34 +71,34 @@
           .dropdown:hover .dropdown-content {
             display: block;
           }
-         
+          
+        
         
         </style>
     <title>{% block title %}School{% endblock %}</title>
 </head>
 <body>
     <div class="row">
-      <div class="col-1">
+      <div class="col-sm-1">
       </div>
-      <div class="col-11">
+      <div class="col-sm-11">
         <header>
           <nav>
             <ul>
                 {% if request.user.is_authenticated %}
-                    <li><h5 style="color: white;">Welcome {{ request.user.username }}</h5></li>
-                    <li><a href="{% url 'home' %}">Home</a></li>
-                    <li><a href="{% url 'sign_in' %}">Sign In</a></li>
-                    <li><a href="{% url 'change_password' %}">Change Password</a></li>
-                    <li><a href="{% url 'logout' %}">Logout</a></li> 
-                    {% if not_read %}
-                      <li><a href="{% url 'notify' %}">Notify/{{n_c}}</a></li>
-                    {% else %}
-                      <li><a href="{% url 'notify' %}">Notify</a></li>
-                    {% endif %}
+                  <li><h5 style="color: white;">Welcome {{ request.user.username }}<h5></li>
+                  <li><a href="{% url 'home' %}">Home</a></li>
+                  <li><a href="{% url 'sign_in' %}">Sign In</a></li>
+                  <li><a href="{% url 'change_password' %}">Change Password</a></li>
+                  <li><a href="{% url 'logout' %}">Logout</a></li> 
+                  {% if not_read %}
+                    <li><a href="{% url 'notify' %}">Notify/{{n_c}}</a></li>
+                  {% else %}
+                    <li><a href="{% url 'notify' %}">Notify</a></li>
+                  {% endif %}
 
                 {% else %}
-                    <li><a href="{% url 'sign_up' %}">Sign up</a></li>
-                    <li><a href="{% url 'sign_in' %}">Sign In</a></li>
+                  <li><a href="{% url 'sign_in' %}">Sign In</a></li>
                 {% endif %}
                 
                   
@@ -106,17 +114,12 @@
                     </select>
                   </form>
             </ul>
-            {% comment %} <img src="{{user.image.url}}" height="20"></a> {% endcomment %}
+             
           </nav>
         </header>
       </div>
         <script>
-          {% comment %} document.addEventListener("DOMContentLoaded", function () {
-            function showAlertify(message, type) {
-                alertify.set('notifier', 'position', 'top-right');
-                alertify.notify(message, type, 5);
-            }
-          }); {% endcomment %}
+         
         
             
         

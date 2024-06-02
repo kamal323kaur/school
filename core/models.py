@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.conf import settings
 from datetime import date
-
+from django.utils.text import slugify
 
 class CustomUser(AbstractUser):
     # email = models.EmailField(_('email address'), unique = True)
@@ -23,7 +23,17 @@ class Notification(models.Model):
     read = models.BooleanField(default=False) 
     created = models.DateTimeField(auto_now=True)
 
-   
+class MyModel(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
+
+    def save(self, *args, **kwargs):
+        # Automatically generate a slug when saving the object
+        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
 
 
 

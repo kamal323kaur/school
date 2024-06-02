@@ -5,6 +5,7 @@
 <body>
 {% block content %}
 <h1>Notifications:</h1>
+
     {% for j in read_n %}
             {% if j.id in l %}
                 <h4><strong>{{forloop.counter}}.  {{j.notify}}</strong></h4>
