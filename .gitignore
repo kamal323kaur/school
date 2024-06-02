@@ -1,3 +1,90 @@
-*.env
+# Python bytecode
+*.py[cod]
+__pycache__/
+*.so
+
+# Django specific files
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
 *.sqlite3
-*.media
+*.env
+
+# Backup files
+*.bak
+*.swp
+*~
+
+# Media files
+/media
+/staticfiles
+/static
+
+# Environment variables
+.env
+
+# Virtual Environment
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django migrations
+**/migrations/*.pyc
+**/migrations/*.pyo
+**/migrations/*.pyd
+**/migrations/__pycache__
+**/migrations/*.log
+**/migrations/*.bak
+
+# Node modules
+node_modules/
+
+# macOS specific files
+.DS_Store
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Database
+*.sqlite3
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox
+.nox
+
+# Testing
+.pytest_cache/
+.coverage
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+pytestdebug.log
+junit.xml
+
+# Other config files
+config/settings/local.py
+config/settings/local.yml
+
+# JetBrains IDEs
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Celery
+celerybeat-schedule
+
+# Sphinx documentation
+docs/_build/
